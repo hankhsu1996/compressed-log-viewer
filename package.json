@@ -1,0 +1,69 @@
+{
+  "name": "compressed-log-viewer",
+  "displayName": "Compressed Log Viewer",
+  "description": "View compressed log files (XZ, bzip2) directly in VS Code",
+  "version": "1.1.0",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:*.xz",
+    "workspaceContains:*.bz2",
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "compressed-log-viewer.compressed",
+        "displayName": "Compressed File Viewer",
+        "selector": [
+          { "filenamePattern": "*.xz" },
+          { "filenamePattern": "*.tar.xz" },
+          { "filenamePattern": "*.bz2" },
+          { "filenamePattern": "*.tar.bz2" }
+        ],
+        "priority": "default"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+  },
+  "devDependencies": {
+    "@types/node": "20.x",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.11.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "lzma-native": "^8.0.6",
+    "tar-stream": "^3.1.7",
+    "bzip2": "^0.1.1"
+  },
+  "publisher": "hankhsu1996",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hankhsu1996/compressed-log-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hankhsu1996/compressed-log-viewer/issues"
+  },
+  "homepage": "https://github.com/hankhsu1996/compressed-log-viewer",
+  "license": "MIT",
+  "author": {
+    "name": "Shou-Li Hsu",
+    "email": "hank850503@gmail.com"
+  }
+}
