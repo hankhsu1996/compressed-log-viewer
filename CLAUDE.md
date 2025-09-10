@@ -78,6 +78,8 @@ The extension uses VS Code's TextDocumentContentProvider API to create virtual d
 
 **Commit Messages:**
 
+- Start commit messages with a verb (e.g., "Add", "Fix", "Update")
+- Use bullet points for multiple changes in commit body
 - Do NOT include Claude Code attribution footers in individual commits
 - Use squash and merge for PRs to create clean commit history
 - Include Claude Code attribution only in PR descriptions (will appear in final squashed commit)
