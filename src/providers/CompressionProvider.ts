@@ -33,7 +33,9 @@ export abstract class CompressionProvider {
    * Check if this provider supports the given file path
    */
   supportsFile(filePath: string): boolean {
-    return this.format.extensions.some(ext => filePath.toLowerCase().endsWith(ext));
+    return this.format.extensions.some((ext) =>
+      filePath.toLowerCase().endsWith(ext),
+    );
   }
 
   /**
@@ -55,10 +57,10 @@ export abstract class CompressionProvider {
     try {
       // Extract original file path from virtual URI
       const filePath = this.extractFilePath(uri);
-      
+
       // Decompress the file
       const decompressedBuffer = await this.decompressFile(filePath);
-      
+
       // Convert to text content
       return await this.bufferToText(decompressedBuffer, filePath);
     } catch (error) {
@@ -73,7 +75,10 @@ export abstract class CompressionProvider {
    * Default implementation removes the scheme-specific suffix
    */
   protected extractFilePath(uri: vscode.Uri): string {
-    return uri.fsPath.replace(new RegExp(`\\.${this.format.scheme.replace('-', '\\-')}$`), '');
+    return uri.fsPath.replace(
+      new RegExp(`\\.${this.format.scheme.replace('-', '\\-')}$`),
+      '',
+    );
   }
 
   /**
@@ -90,10 +95,10 @@ export abstract class CompressionProvider {
    * Handle large files by prompting user and optionally writing to disk
    */
   async handleLargeFile(
-    filePath: string, 
-    decompressedData: Buffer, 
+    filePath: string,
+    decompressedData: Buffer,
     _maxSize: number,
-    _currentTabUri?: vscode.Uri
+    _currentTabUri?: vscode.Uri,
   ): Promise<boolean> {
     // Build output path by removing the compression extension
     const outputPath = this.getDecompressedPath(filePath);

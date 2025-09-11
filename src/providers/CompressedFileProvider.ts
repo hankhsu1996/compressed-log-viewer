@@ -5,7 +5,9 @@ import { ProviderRegistry } from './ProviderRegistry';
  * Main text document content provider for all compressed file formats
  * Delegates to specific compression providers via the registry
  */
-export class CompressedFileProvider implements vscode.TextDocumentContentProvider {
+export class CompressedFileProvider
+  implements vscode.TextDocumentContentProvider
+{
   private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
   private registry: ProviderRegistry;
 
@@ -24,7 +26,7 @@ export class CompressedFileProvider implements vscode.TextDocumentContentProvide
   public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
     // Find the appropriate provider based on the URI scheme
     const provider = this.findProviderByScheme(uri.scheme);
-    
+
     if (!provider) {
       const errorMsg = `No provider found for scheme: ${uri.scheme}`;
       vscode.window.showErrorMessage(errorMsg);
@@ -40,7 +42,7 @@ export class CompressedFileProvider implements vscode.TextDocumentContentProvide
    */
   private findProviderByScheme(scheme: string): any {
     const providers = this.registry.getAllProviders();
-    return providers.find(provider => provider.getFormat().scheme === scheme);
+    return providers.find((provider) => provider.getFormat().scheme === scheme);
   }
 
   /**

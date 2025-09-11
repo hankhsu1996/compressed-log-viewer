@@ -21,16 +21,16 @@ export class BZ2Provider extends CompressionProvider {
    */
   async decompressFile(filePath: string): Promise<Buffer> {
     const compressed = await fs.promises.readFile(filePath);
-    
+
     // Convert Buffer to Uint8Array for bzip2 library
     const uint8Array = new Uint8Array(compressed);
-    
+
     // Create bit reader
     const bitstream = bzip2.array(uint8Array);
-    
+
     // Decompress using simple method (handles header + decompression)
     const decompressed = bzip2.simple(bitstream);
-    
+
     // Convert string result back to Buffer
     return Buffer.from(decompressed, 'binary');
   }
@@ -52,20 +52,20 @@ export class BZ2Provider extends CompressionProvider {
     return new Promise<string>((resolve, reject) => {
       extract.on('entry', (_header: any, stream: any, next: () => void) => {
         const chunks: Buffer[] = [];
-        
+
         stream.on('data', (chunk: Buffer) => chunks.push(chunk));
-        
+
         stream.on('end', () => {
           content += Buffer.concat(chunks).toString('utf8');
           next();
         });
-        
+
         stream.resume();
       });
 
       extract.on('finish', () => resolve(content));
       extract.on('error', reject);
-      
+
       // Feed the decompressed buffer to the tar extractor
       extract.end(buffer);
     });

@@ -13,7 +13,7 @@ export class ProviderRegistry {
    */
   register(provider: CompressionProvider): void {
     this.providers.push(provider);
-    
+
     // Map all supported extensions to this provider
     const format = provider.getFormat();
     for (const extension of format.extensions) {
@@ -26,17 +26,18 @@ export class ProviderRegistry {
    */
   getProvider(filePath: string): CompressionProvider | null {
     const lowerPath = filePath.toLowerCase();
-    
+
     // Check extensions in order of specificity (longer extensions first)
-    const extensions = Array.from(this.extensionMap.keys())
-      .sort((a, b) => b.length - a.length);
-    
+    const extensions = Array.from(this.extensionMap.keys()).sort(
+      (a, b) => b.length - a.length,
+    );
+
     for (const extension of extensions) {
       if (lowerPath.endsWith(extension)) {
         return this.extensionMap.get(extension) || null;
       }
     }
-    
+
     return null;
   }
 
@@ -65,6 +66,6 @@ export class ProviderRegistry {
    * Get all URI schemes used by registered providers
    */
   getSchemes(): string[] {
-    return this.providers.map(provider => provider.getFormat().scheme);
+    return this.providers.map((provider) => provider.getFormat().scheme);
   }
 }

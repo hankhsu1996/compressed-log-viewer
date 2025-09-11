@@ -17,9 +17,9 @@ declare module 'bzip2' {
    * @returns decompressed string or -1 if final block
    */
   export function decompress(
-    bitstream: () => number, 
-    blockSize: number, 
-    maxLength?: number
+    bitstream: () => number,
+    blockSize: number,
+    maxLength?: number,
   ): string | -1;
 
   /**

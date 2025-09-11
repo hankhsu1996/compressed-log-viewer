@@ -41,20 +41,20 @@ export class XZProvider extends CompressionProvider {
     return new Promise<string>((resolve, reject) => {
       extract.on('entry', (_header: any, stream: any, next: () => void) => {
         const chunks: Buffer[] = [];
-        
+
         stream.on('data', (chunk: Buffer) => chunks.push(chunk));
-        
+
         stream.on('end', () => {
           content += Buffer.concat(chunks).toString('utf8');
           next();
         });
-        
+
         stream.resume();
       });
 
       extract.on('finish', () => resolve(content));
       extract.on('error', reject);
-      
+
       // Feed the decompressed buffer to the tar extractor
       extract.end(buffer);
     });
