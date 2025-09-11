@@ -17,11 +17,7 @@ This is a VS Code extension that enables viewing of compressed log files directl
 **Code Quality:**
 
 - `npm run lint` - Run ESLint on TypeScript files in src/
-
-**Testing:**
-
-- Use the VS Code Extension Host for testing (F5 or Run Extension configuration)
-- Extension tests are configured via `.vscode-test.mjs`
+- `npm run format` - Format code with Prettier
 
 **Development:**
 
