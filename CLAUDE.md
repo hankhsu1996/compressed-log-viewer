@@ -17,11 +17,7 @@ This is a VS Code extension that enables viewing of compressed log files directl
 **Code Quality:**
 
 - `npm run lint` - Run ESLint on TypeScript files in src/
-
-**Testing:**
-
-- Use the VS Code Extension Host for testing (F5 or Run Extension configuration)
-- Extension tests are configured via `.vscode-test.mjs`
+- `npm run format` - Format code with Prettier
 
 **Development:**
 
@@ -71,10 +67,17 @@ The extension uses VS Code's TextDocumentContentProvider API to create virtual d
 
 **Version Bumping:**
 
-- Version bumps are typically done within feature branches or directly on main
-- No separate branch needed for version bumps unless complex release process
-- Bump version as part of the feature that warrants the increment
+- Use release branches (`release/version-number`) for version bumps
+- Never bump versions in feature branches (keeps features separate from releases)
+- Always run `npm install` after version changes to sync package-lock.json
 - Follow semantic versioning: MAJOR.MINOR.PATCH
+
+**Git Workflow Best Practices:**
+
+- NEVER commit directly to main branch (creates merge commits and non-linear history)
+- Always use branches + PRs, even for small changes
+- Exception: Internal documentation (CLAUDE.md, .gitignore) can be committed directly
+- Keep git history linear by avoiding direct main commits
 
 **Commit Messages:**
 
@@ -84,3 +87,28 @@ The extension uses VS Code's TextDocumentContentProvider API to create virtual d
 - Do NOT include Claude Code attribution footers in individual commits
 - Use squash and merge for PRs to create clean commit history
 - Include Claude Code attribution only in PR descriptions (will appear in final squashed commit)
+
+## Release Workflow
+
+**Complete Release Process:**
+
+1. **Feature Development**: Work in feature branches, create PRs for all changes
+2. **Release Preparation**: Create release branch (`release/x.y.z`)
+   - Update version in package.json
+   - Update CHANGELOG.md with release date
+   - Run `npm install` to sync package-lock.json
+   - Commit changes and create release PR
+3. **Release Finalization**: 
+   - Merge release PR to main
+   - Switch to main and pull latest
+   - Create git tag: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
+   - Push tag: `git push origin vX.Y.Z`
+4. **GitHub Release**: Use `gh release create` with comprehensive release notes
+5. **Marketplace Publishing**: Run `vsce publish` to publish to VS Code marketplace
+
+**Extension Publishing:**
+
+- Install vsce: `npm install -g @vscode/vsce`
+- Login once: `vsce login <publisher-name>` (requires Azure DevOps PAT)
+- Publish: `vsce publish` (automatically builds and uploads)
+- Extension URL: `https://marketplace.visualstudio.com/items?itemName=<publisher>.<name>`
