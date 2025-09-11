@@ -2,7 +2,7 @@
 
 All notable changes to the "Compressed Log Viewer" extension will be documented in this file.
 
-## [Unreleased]
+## [1.0.0] - 2025-09-10
 
 ### Added
 - Support for viewing XZ files (`.xz`, `.tar.xz`) directly in VS Code
