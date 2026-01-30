@@ -2,7 +2,7 @@
   "name": "compressed-log-viewer",
   "displayName": "Compressed Log Viewer",
   "description": "View compressed log files (XZ, bzip2) directly in VS Code",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.74.0"
