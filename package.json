@@ -20,10 +20,18 @@
         "viewType": "compressed-log-viewer.compressed",
         "displayName": "Compressed File Viewer",
         "selector": [
-          { "filenamePattern": "*.xz" },
-          { "filenamePattern": "*.tar.xz" },
-          { "filenamePattern": "*.bz2" },
-          { "filenamePattern": "*.tar.bz2" }
+          {
+            "filenamePattern": "*.xz"
+          },
+          {
+            "filenamePattern": "*.tar.xz"
+          },
+          {
+            "filenamePattern": "*.bz2"
+          },
+          {
+            "filenamePattern": "*.tar.bz2"
+          }
         ],
         "priority": "default"
       }
@@ -34,21 +42,27 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "test": "TS_NODE_PROJECT=test/tsconfig.json mocha --require ts-node/register 'test/unit/**/*.test.ts'"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
     "@types/node": "20.x",
     "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
+    "chai": "^4.3.10",
     "eslint": "^8.57.0",
+    "mocha": "^10.2.0",
     "prettier": "^3.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {
     "lzma-native": "^8.0.6",
-    "tar-stream": "^3.1.7",
-    "bzip2": "^0.1.1"
+    "seek-bzip": "^2.0.0",
+    "tar-stream": "^3.1.7"
   },
   "publisher": "hankhsu1996",
   "repository": {

@@ -100,44 +100,79 @@ export abstract class CompressionProvider {
     _maxSize: number,
     _currentTabUri?: vscode.Uri,
   ): Promise<boolean> {
-    // Build output path by removing the compression extension
-    const outputPath = this.getDecompressedPath(filePath);
-    const fileName = require('path').basename(outputPath);
+    const path = require('path');
+    const defaultPath = this.getDecompressedPath(filePath);
+    const defaultFileName = path.basename(defaultPath);
     const sizeMB = Math.round(decompressedData.length / 1024 / 1024);
 
-    // Ask user
+    // Ask user with two options
     const choice = await vscode.window.showWarningMessage(
-      `This file is too large to preview (${sizeMB}MB). Do you want to decompress it to ${fileName}?`,
-      'Decompress',
+      `This file is too large to preview (${sizeMB}MB). Decompress to ${defaultFileName}?`,
+      'Decompress Here',
+      'Save As...',
       'Cancel',
     );
 
-    if (choice !== 'Decompress') {
+    if (!choice || choice === 'Cancel') {
       return false;
     }
 
-    // Check if output file already exists
-    try {
-      const fs = require('fs');
-      await fs.promises.access(outputPath);
-      const overwrite = await vscode.window.showWarningMessage(
-        `File ${fileName} already exists. Overwrite?`,
-        'Overwrite',
-        'Cancel',
-      );
-      if (overwrite !== 'Overwrite') {
-        return false;
+    const data = new Uint8Array(decompressedData);
+
+    let targetUri: vscode.Uri | undefined;
+
+    if (choice === 'Decompress Here') {
+      // Try to save to the same folder
+      try {
+        targetUri = vscode.Uri.file(defaultPath);
+        await vscode.workspace.fs.writeFile(targetUri, data);
+      } catch {
+        // If failed, fall back to save dialog
+        vscode.window.showWarningMessage(
+          'Cannot write to this folder. Please choose a different location.',
+        );
+        targetUri = undefined;
       }
-    } catch {
-      // File doesn't exist, proceed
     }
 
-    // Write decompressed data to disk
-    const fs = require('fs');
-    await fs.promises.writeFile(outputPath, decompressedData);
+    // Show save dialog if needed (either "Save As..." was chosen or "Decompress Here" failed)
+    if (!targetUri) {
+      targetUri = await vscode.window.showSaveDialog({
+        defaultUri: vscode.Uri.file(defaultPath),
+        filters: { 'All Files': ['*'] },
+        title: 'Save decompressed file as',
+      });
 
-    // Inform user
-    vscode.window.showInformationMessage(`Decompressed to ${fileName}.`);
+      if (!targetUri) {
+        return false;
+      }
+
+      try {
+        await vscode.workspace.fs.writeFile(targetUri, data);
+      } catch (error) {
+        vscode.window.showErrorMessage(`Failed to save file: ${error}`);
+        return false;
+      }
+    }
+
+    // Show success with options (don't auto-open large files - might be slow)
+    const fileName = path.basename(targetUri.fsPath);
+    const action = await vscode.window.showInformationMessage(
+      `Decompressed to ${fileName}`,
+      'Open',
+      'Show in Folder',
+    );
+
+    if (action === 'Open') {
+      try {
+        const doc = await vscode.workspace.openTextDocument(targetUri);
+        await vscode.window.showTextDocument(doc);
+      } catch {
+        vscode.window.showErrorMessage(`Cannot open ${fileName} as text file`);
+      }
+    } else if (action === 'Show in Folder') {
+      vscode.commands.executeCommand('revealFileInOS', targetUri);
+    }
 
     return true;
   }

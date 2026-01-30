@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./**/*", "../src/**/*"],
+  "files": [
+    "../src/types/tar-stream.d.ts",
+    "../src/types/lzma-native.d.ts",
+    "../src/types/seek-bzip.d.ts"
+  ]
+}
