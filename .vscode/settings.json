@@ -7,5 +7,8 @@
 		"out": true // set this to false to include "out" folder in search results
 	},
 	// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-	"typescript.tsc.autoDetect": "off"
+	"js/ts.tsc.autoDetect": "off",
+	// Use the project's own TypeScript, so the editor and the build check with the same compiler
+	"js/ts.tsdk.path": "node_modules/typescript/lib",
+	"js/ts.tsdk.promptToUseWorkspaceVersion": true
 }

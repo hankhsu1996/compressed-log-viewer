@@ -75,7 +75,11 @@ export const STANDARD_TEST_CASES: TestCase[] = [
   { name: 'tiny', lines: 10, description: 'tiny file (~1KB)' },
   { name: 'small', lines: 100, description: 'small file (~10KB)' },
   { name: 'medium', lines: 1000, description: 'medium file (~100KB)' },
-  { name: 'multiblock', lines: 15000, description: 'multi-block file (~1.5MB)' },
+  {
+    name: 'multiblock',
+    lines: 15000,
+    description: 'multi-block file (~1.5MB)',
+  },
 ];
 
 /**
@@ -83,5 +87,9 @@ export const STANDARD_TEST_CASES: TestCase[] = [
  * 750000 lines ≈ 50MB ≈ 55+ BZ2 blocks
  */
 export const LARGE_TEST_CASES: TestCase[] = [
-  { name: 'large', lines: 750000, description: 'large file (~50MB, 55+ blocks)' },
+  {
+    name: 'large',
+    lines: 750000,
+    description: 'large file (~50MB, 55+ blocks)',
+  },
 ];
