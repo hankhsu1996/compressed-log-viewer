@@ -2,13 +2,24 @@
   "name": "compressed-log-viewer",
   "displayName": "Compressed Log Viewer",
   "description": "View compressed log files (XZ, bzip2, Zstandard) directly in VS Code",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.103.0"
   },
   "categories": [
     "Other"
+  ],
+  "keywords": [
+    "log",
+    "compressed",
+    "xz",
+    "bzip2",
+    "bz2",
+    "zstd",
+    "zstandard",
+    "zst",
+    "tar"
   ],
   "activationEvents": [
     "onStartupFinished"

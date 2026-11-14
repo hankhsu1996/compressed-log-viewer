@@ -2,7 +2,7 @@
 
 All notable changes to the "Compressed Log Viewer" extension will be documented in this file.
 
-## [Unreleased]
+## [1.1.0] - 2026-11-14
 
 ### Added
 - Support for viewing Zstandard files (`.zst`, `.tar.zst`)
@@ -25,6 +25,7 @@ All notable changes to the "Compressed Log Viewer" extension will be documented 
 - bzip2 is decoded by `unbzip2-stream`, one block at a time, instead of `seek-bzip`
 - A file too large to preview offers "Decompress to …" and "Save As…" in its editor tab instead of a pop-up
 - Requires VS Code 1.103.0 or newer, whose bundled Node.js includes Zstandard
+- Tabs of decompressed files left open by version 1.0.x are not restored after updating; open the compressed file again
 
 ## [1.0.1] - 2026-01-29
 
