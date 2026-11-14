@@ -1,40 +1,65 @@
 /**
- * Pure BZ2 decompression logic (no VS Code dependency)
+ * bzip2 decompression
  *
- * Uses seek-bzip library which correctly handles multi-block bzip2 files.
- * The older 'bzip2' npm package has bugs with multi-block decompression.
+ * Uses unbzip2-stream, which decodes one block at a time as input arrives,
+ * decodes every concatenated stream, and reports input that ends before a
+ * stream's end marker. The older 'bzip2' package lost data across blocks,
+ * and seek-bzip needs the whole file in memory at once and accepts a file cut
+ * short at a block boundary.
  */
 
-import * as fs from 'fs';
-import * as seekBzip from 'seek-bzip';
-import { extractTarContent } from './tar';
+import unbzip2Stream from 'unbzip2-stream';
+import { ByteReader, asFailure, startsWith } from './chunks';
+import { DecompressionFailure } from './failure';
 
-/**
- * Decompress a BZ2 file to Buffer
- */
-export async function decompressBz2File(filePath: string): Promise<Buffer> {
-  const compressed = await fs.promises.readFile(filePath);
-  return decompressBz2Buffer(compressed);
-}
+/** Every bzip2 stream starts with "BZh" */
+const BZIP2_MAGIC = Buffer.from('BZh');
 
 /**
- * Decompress BZ2 data from a Buffer
+ * Decompress bzip2 data, every concatenated stream included
+ *
+ * pbzip2, and `cat a.bz2 b.bz2`, write several complete streams one after
+ * another; the bzip2 tool decodes them all, so we do too.
  */
-export function decompressBz2Buffer(compressed: Buffer): Buffer {
-  const decompressed = seekBzip.decode(compressed);
-  return Buffer.from(decompressed);
-}
+export async function* decompressBz2(
+  compressed: AsyncIterable<Buffer>,
+): AsyncGenerator<Buffer> {
+  const reader = new ByteReader(compressed);
+  try {
+    if (!(await startsWith(reader, BZIP2_MAGIC))) {
+      throw new DecompressionFailure(
+        'not-this-format',
+        'No bzip2 stream header',
+      );
+    }
 
-/**
- * Convert decompressed buffer to text
- * Handles both regular .bz2 files and .tar.bz2 archives
- */
-export async function bz2BufferToText(
-  buffer: Buffer,
-  filePath: string,
-): Promise<string> {
-  if (filePath.endsWith('.tar.bz2')) {
-    return extractTarContent(buffer);
+    // The decoder does its work, and emits its output and errors, within
+    // each write() and end() call, so a chunk is decoded only once the
+    // previous one's output has been taken
+    const decoder = unbzip2Stream();
+    let decoded: Buffer[] = [];
+    let failure: Error | undefined;
+    decoder.on('data', (chunk: Buffer) => decoded.push(chunk));
+    decoder.on('error', (error: Error) => (failure ??= error));
+
+    const taken = function* () {
+      if (failure) {
+        throw failure;
+      }
+      const chunks = decoded;
+      decoded = [];
+      yield* chunks;
+    };
+
+    for await (const chunk of reader.rest()) {
+      decoder.write(chunk);
+      yield* taken();
+    }
+    decoder.end();
+    yield* taken();
+  } catch (error) {
+    throw asFailure(error, () => 'damaged');
+  } finally {
+    await reader.close();
   }
-  return buffer.toString('utf8');
 }

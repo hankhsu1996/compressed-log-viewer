@@ -7,3 +7,4 @@
 export * from './fixtures';
 export * from './compression';
 export * from './tempDir';
+export * from './streams';
